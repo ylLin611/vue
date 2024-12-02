@@ -21,7 +21,7 @@ const dynamicRoutes = Object.values(modules)
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: routes.concat(dynamicRoutes),
+  routes: routes.concat(dynamicRoutes as any),
 })
 
 export default router

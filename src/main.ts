@@ -9,6 +9,7 @@ import router from './common/router'
 // css
 import '@unocss/reset/normalize.css'
 import 'virtual:uno.css'
+import 'element-plus/dist/index.css'
 
 const app = createApp(App)
 
