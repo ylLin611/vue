@@ -1,29 +1,31 @@
 import {
   defineConfig,
+  presetAttributify,
   presetIcons,
-  presetTypography,
   presetUno,
   transformerDirectives,
   transformerVariantGroup,
 } from 'unocss'
 
 export default defineConfig({
-  theme: {
-    colors: {
-      baseGray: '#58595B',
-    },
+  shortcuts: {
+    'border-main': 'border-$vp-c-divider',
+    'bg-main': 'bg-gray-400',
+    'bg-base': 'bg-white dark:bg-hex-1a1a1a',
+    'flex-center': 'flex items-center justify-center',
   },
   presets: [
     presetUno(),
+    presetAttributify(),
     presetIcons({
-      collections: {
-        carbon: () => import('@iconify-json/carbon/icons.json').then((i) => i.default),
-      },
+      scale: 1.2,
+      warn: true,
     }),
-    presetTypography(),
   ],
-  transformers: [transformerDirectives(), transformerVariantGroup()],
-  shortcuts: {
-    'flex-center': 'flex items-center justify-center',
+  theme: {
+    colors: {
+      primary: '#3eaf7c',
+    },
   },
+  transformers: [transformerDirectives(), transformerVariantGroup()],
 })

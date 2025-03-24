@@ -7,6 +7,9 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Card: typeof import('./src/common/components/Card.vue')['default']
+    DarkToggle: typeof import('./src/common/components/DarkToggle.vue')['default']
+    DashboardWrap: typeof import('./src/common/components/DashboardWrap.vue')['default']
     ElIcon: typeof import('element-plus/es')['ElIcon']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     RouterLink: typeof import('vue-router')['RouterLink']
