@@ -1,8 +1,9 @@
 <template>
+  <!-- bg-#fec7d7 -->
   <div ref="containerRef" class="relative h-screen bg-#fec7d7">
     <div
       v-show="showScreen"
-      class="top-50% left-50% w-1920px h-1080px absolute bg-cover"
+      class="top-50% left-50% w-1920px h-940px absolute bg-cover"
       :style="{
         transform: `translate(-50%, -50%) scale(${zoom})`,
       }"
@@ -27,7 +28,7 @@ const showScreen = ref(false)
 const calcZoom = () => {
   const width = window.innerWidth
   const height = window.innerHeight
-  zoom.value = Math.min(width / 1920, height / 1080)
+  zoom.value = Math.min(width / 1920, height / 940)
   showScreen.value = true
 }
 const onResize = useDebounceFn(() => {

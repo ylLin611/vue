@@ -1,27 +1,45 @@
 <template>
   <DashboardWrap>
-    <div class="flex gap-4 px-1 py-5 h-full box-border">
-      <div class="grid-container left">
-        <div class="grid">
-          <div v-for="element in elements" :key="`left-${element}`" class="grid-cell">
+    <div class="h-full flex p-20px flex-col gap-10px font-[shijin] bg-#fec7d7">
+      <h1 class="text-center">十六班！打卡！</h1>
+      <div class="flex min-h-1 flex-1 gap-20px">
+        <div class="bg-#eec44c h-full rounded-50px flex-1 overflow-hidden">
+          <div
+            class="w-full h-full grid grid-cols-9 grid-rows-[50px_repeat(6,1fr)] gap-10px p-20px box-border"
+          >
+            <div class="grid-col-span-9 text-center lh-50px text-32px text-#f40">加油！加油</div>
             <div
-              v-if="!movedElements.includes(element)"
-              class="element left-element"
-              @click="moveElement(element)"
+              v-for="(item, index) in elements"
+              class="flex-center flex-wrap cursor-pointer select-none"
+              ref="itemRef"
+              @click="handleClick(item, index)"
             >
-              <img :src="element.img" alt="" class="h-40px" />
+              <div class="text-24px">{{ item.name }}</div>
+              <div class="text-center">
+                <img :src="item.img" alt="" class="w-60%" />
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="grid-container right">
-        <div class="grid">
-          <div v-for="element in elements" :key="`right-${element}`" class="grid-cell">
-            <transition :name="`element-${element}`" appear>
-              <div v-if="movedElements.includes(element)" class="element right-element">
-                <img :src="element.img" alt="" class="h-40px" />
-              </div>
-            </transition>
+        <div class="bg-#eec44c h-full rounded-50px flex-1">
+          <div
+            class="w-full h-full grid grid-cols-9 grid-rows-[50px_repeat(6,1fr)] gap-5px p-20px box-border"
+            ref="containerRef"
+          >
+            <div class="grid-col-span-9 text-center lh-50px text-32px text-#f40">已完成</div>
+            <div
+              v-for="(item, index) in movedElements"
+              class="flex-center flex-wrap transition duration-2000"
+              :class="item ? 'op-100' : 'op-0'"
+              @click="movedClick(index)"
+            >
+              <template v-if="item">
+                <div class="text-24px">{{ item.name }}</div>
+                <div class="text-center">
+                  <img :src="item.img" alt="" class="w-60%" />
+                </div>
+              </template>
+            </div>
           </div>
         </div>
       </div>
@@ -45,6 +63,7 @@ import img12 from '@/assets/image/12.gif'
 import img13 from '@/assets/image/13.gif'
 import img14 from '@/assets/image/14.gif'
 import DashboardWrap from '../components/DashboardWrap.vue'
+import gsap from 'gsap'
 
 const imgList = [
   img1,
@@ -95,7 +114,7 @@ const studentList = ref([
   '卞艺颖',
   '张露伊',
   '许瀛月',
-  '王舒苒',
+  // '王舒苒',
   '李奕彤',
   '冯昱桐',
   '李迦淇',
@@ -129,100 +148,33 @@ const elements = computed(() => {
     }
   })
 })
-const movedElements = ref([])
-const moveElement = (element) => {
-  if (!movedElements.value.includes(element)) {
-    movedElements.value.push(element)
+const movedElements = ref(
+  Array.from({
+    length: studentList.value.length,
+  }),
+)
 
-    // Create dynamic CSS for this specific element's transition
-    const styleEl = document.createElement('style')
-    const leftEl = document.querySelector(`.left .grid-cell:nth-child(${element}) .element`)
-    const rightEl = document.querySelector(`.right .grid-cell:nth-child(${element})`)
+const containerRef = ref()
+const itemRef = ref()
 
-    if (leftEl && rightEl) {
-      const leftRect = leftEl.getBoundingClientRect()
-      const rightRect = rightEl.getBoundingClientRect()
-
-      const dx = leftRect.left - rightRect.left
-      const dy = leftRect.top - rightRect.top
-
-      styleEl.textContent = `
-        .element-${element}-enter-active {
-          transition: transform 2.6s cubic-bezier(0.45, 0, 0.55, 1);
-        }
-        .element-${element}-enter-from {
-          transform: translate(${dx}px, ${dy}px);
-        }
-      `
-      document.head.appendChild(styleEl)
-    }
-  }
+const handleClick = (item, index, e) => {
+  gsap.to(itemRef.value[index], {
+    x: containerRef.value.clientWidth,
+    duration: 2,
+  })
+  movedElements.value[index] = item
+}
+const movedClick = (index) => {
+  gsap.to(itemRef.value[index], {
+    x: 0,
+    duration: 1,
+  })
+  movedElements.value[index] = null
 }
 </script>
-
 <style scoped>
-.container {
-  display: flex;
-  width: 100%;
-  min-height: 100vh;
-  padding: 1rem;
-  gap: 1rem;
-}
-
-@media (max-width: 768px) {
-  .container {
-    flex-direction: column;
-  }
-}
-
-.grid-container {
-  flex: 1;
-  border: 2px solid #e2e8f0;
-  border-radius: 0.5rem;
-  padding: 1rem;
-  height: 100%;
-}
-
-h2 {
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-}
-
-.grid {
-  display: grid;
-  height: 100%;
-  grid-template-columns: repeat(9, 1fr);
-  gap: 0.5rem;
-}
-
-.grid-cell {
-  position: relative;
-  /* aspect-ratio: 1/1; */
-}
-
-.element {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 0.375rem;
-  color: white;
-  font-weight: 500;
-}
-
-.left-element {
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-/* Default transition for all elements */
-.element-enter-active {
-  transition: all 0.5s cubic-bezier(0.45, 0, 0.55, 1); /* Ease in-out for acceleration and deceleration */
-}
-
-.element-enter-from {
-  opacity: 0;
+@font-face {
+  font-family: 'shijin';
+  src: url('@/assets/font/nishiki-teki.ttf');
 }
 </style>
