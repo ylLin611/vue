@@ -21,7 +21,7 @@
             </div>
           </div>
         </div>
-        <div class="bg-#eec44c h-full rounded-50px flex-1">
+        <div class="bg-#eec44c h-full rounded-50px flex-1 overflow-hidden">
           <div
             class="w-full h-full grid grid-cols-9 grid-rows-[50px_repeat(6,1fr)] gap-5px p-20px box-border"
             ref="containerRef"
@@ -29,8 +29,8 @@
             <div class="grid-col-span-9 text-center lh-50px text-32px text-#f40">已完成</div>
             <div
               v-for="(item, index) in movedElements"
-              class="flex-center flex-wrap transition duration-2000"
-              :class="item ? 'op-100' : 'op-0'"
+              ref="moveRef"
+              class="flex-center flex-wrap cursor-pointer"
               @click="movedClick(index)"
             >
               <template v-if="item">
@@ -156,20 +156,46 @@ const movedElements = ref(
 
 const containerRef = ref()
 const itemRef = ref()
+const moveRef = ref()
 
 const handleClick = (item, index, e) => {
+  const width = itemRef.value[0].clientWidth
+  const containerWidth = containerRef.value.clientWidth
   gsap.to(itemRef.value[index], {
-    x: containerRef.value.clientWidth,
-    duration: 2,
+    x: containerWidth - width * (((index + 1) % 9) - 1),
+    duration: 1,
+    ease: 'power2.in',
+    onComplete: () => {
+      gsap.fromTo(
+        moveRef.value[index],
+        {
+          x: -(width * ((index % 9) + 1)),
+        },
+        {
+          x: 0,
+          duration: 1,
+          ease: 'power2.out',
+        },
+      )
+      movedElements.value[index] = item
+    },
   })
-  movedElements.value[index] = item
 }
 const movedClick = (index) => {
-  gsap.to(itemRef.value[index], {
-    x: 0,
+  const width = itemRef.value[0].clientWidth
+  gsap.to(moveRef.value[index], {
+    x: -(width * ((index % 9) + 1)),
     duration: 1,
+    ease: 'power2.in',
+    onComplete: () => {
+      gsap.to(itemRef.value[index], {
+        x: 0,
+        duration: 1,
+        ease: 'power2.out',
+      })
+      movedElements.value[index] = null
+    },
   })
-  movedElements.value[index] = null
 }
 </script>
 <style scoped>
